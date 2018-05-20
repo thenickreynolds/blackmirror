@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -41,12 +42,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webViewClient = WebViewClient()
-        webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
 
         @Suppress("UsePropertyAccessSyntax")
         webView.settings.setJavaScriptEnabled(true)
+        
+        webView.settings.setAppCacheEnabled(false)
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
         WebView.setWebContentsDebuggingEnabled(true)
+
+        webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
 
         camera.facing = 1
 
