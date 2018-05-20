@@ -15,7 +15,6 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.webkit.WebView
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +48,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tick() {
-        Handler(Looper.getMainLooper()).postDelayed({ tick() }, 10000)
+        val interval = 30 * 1000L
+        Handler(Looper.getMainLooper()).postDelayed({ tick() }, interval)
         camera.captureImage({ runOnUiThread({ analyzeBitmapAndAdjustBrightness(it.bitmap) }) })
     }
 
@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         val photoBrightness = calculateBrightnessEstimate(bitmap)
 
         Log.d("BRIGHTNESS", "Adjusting to $photoBrightness")
-        Toast.makeText(this, "Adjusting to $photoBrightness", Toast.LENGTH_SHORT).show()
 
         val layoutParams = window.attributes
         layoutParams.screenBrightness = photoBrightness / 255.toFloat()

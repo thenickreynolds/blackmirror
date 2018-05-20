@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <WebView
-        android:id="@+id/webView"
+    <com.wonderkiln.camerakit.CameraView
+        android:id="@+id/camera"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,8 +16,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <com.wonderkiln.camerakit.CameraView
-        android:id="@+id/camera"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
