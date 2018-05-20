@@ -18,9 +18,9 @@ body {
 #centercontainer {
 	display: flex;
 	flex-direction: column;
-	padding: 50px;
 	height: 80%;
 	width: 80%;
+	margin: 10%;
 }
 
 #salutation {
