@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     https://gist.github.com/bodyflex/b1d772caf76cdc0c11e2
     */
-    fun calculateBrightnessEstimate(bitmap: android.graphics.Bitmap, pixelSpacing: Int = 1): Int {
+    private fun calculateBrightnessEstimate(bitmap: android.graphics.Bitmap, pixelSpacing: Int = 1): Int {
         var red = 0
         var green = 0
         var blue = 0
