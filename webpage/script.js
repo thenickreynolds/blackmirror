@@ -81,39 +81,48 @@ const weather_icons = {
 	'50n': 'nt_hazy.png',
 };
 
-function getSalutation(time) {
-	const morningSalutation = "Good morning you beautiful person!";
-	const daySalutation = "Good day you amazing brute!";
-	const eveningSalutation = "Good afternoon you sexy fox!";
-	const nightSalutation = "Good night you admirable angel!";
+const saluation_nouns = [ "person", "angel", "fox", "brute" ];
+const saluation_adjectives = [ "sexy", "beautiful", "handsome", "amazing", "glorious", "picturesque", "admirable" ];
 
-	const hours = {
-		1: nightSalutation,
-		2: nightSalutation,
-		3: nightSalutation,
-		4: nightSalutation,
-		5: morningSalutation,
-		6: morningSalutation,
-		7: morningSalutation,
-		8: morningSalutation,
-		9: morningSalutation,
-		10: morningSalutation,
-		11: daySalutation,
-		12: daySalutation,
-		13: daySalutation,
-		14: eveningSalutation,
-		15: eveningSalutation,
-		16: eveningSalutation,
-		17: eveningSalutation,
-		18: eveningSalutation,
-		19: eveningSalutation,
-		20: eveningSalutation,
-		21: nightSalutation,
-		22: nightSalutation,
-		23: nightSalutation,
-		24: nightSalutation,
-	};
-	return hours[time.hour() + 1];
+function random_between(low, high) {
+	const range = high - low + 1;
+	return Math.floor(Math.random() * range) + low;
+}
+
+function random_element(arr) {
+	const elem = random_between(0, arr.length - 1);
+	return arr[elem];
+}
+
+function getSalutationPrefix(time) {
+	const morningSalutation = "Good morning you ";
+	const daySalutation = "Good day you ";
+	const eveningSalutation = "Good afternoon you ";
+	const nightSalutation = "Good night you ";
+
+	const hour = time.hour() + 1;
+
+	if (hour >= 5 && hour <= 11) {
+		return morningSalutation;
+	}
+
+	if (hour <= 13) {
+		return daySalutation;
+	}
+
+	if (hour <= 18) {
+		return eveningSalutation;
+	}
+
+	return nightSalutation;
+}
+
+function getSalutation(time) {
+	const prefix = getSalutationPrefix(time);
+	const noun = random_element(saluation_nouns);
+	const adjective = random_element(saluation_adjectives);
+
+	return prefix + adjective + " " + noun + "!";
 }
 
 function updateTime() {
