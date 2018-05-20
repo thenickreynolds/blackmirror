@@ -3,8 +3,14 @@ $('document').ready(function(){
     $('#loading').show();
 	$('.content').hide();
 
+	const clock_tick = 10 * 1000;
+	const reload_tick = 60 * 60 * 1000;
+
 	updateTime();
-	setInterval(function() { updateTime(); }, 10000);
+
+	setInterval(function() { updateTime(); }, clock_tick);
+
+	setInterval(function() { location.reload(); }, reload_tick);
 
 	loadFromNetwork();
 });
@@ -115,7 +121,7 @@ function updateTime() {
 
 	$('#salutation').text(getSalutation(time));
 
-	$('#date').text(time.format("ddd do MMM").toUpperCase());
+	$('#date').text(time.format("ddd - Do MMM").toUpperCase());
 	$('#time').text(time.format("h:mm"));
 };
 
@@ -140,6 +146,24 @@ function getWeatherIcon(json) {
 	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
 }
 
+function convertCrypto(json) {
+	const btc_raw = json.USD;
+
+	const btc = Math.round(json.USD);
+	const bch = Math.round(btc_raw / json.BCH);
+	const eth = Math.round(btc_raw / json.ETH);
+	const xrp = Math.round(btc_raw / json.XRP);
+	const ltc = Math.round(btc_raw / json.LTC);
+	
+	return {
+		btc: btc,
+		bch: bch,
+		eth: eth,
+		xrp: xrp,
+		ltc: ltc,
+	}
+}
+
 function loadFromNetwork() {
 	$.getJSON("https://www.reddit.com/r/showerthoughts/top.json?sort=top&t=month&limit=20",function(json) {
 		var rand=Math.floor(Math.random() * 20);
@@ -160,6 +184,15 @@ function loadFromNetwork() {
 			$('#weather_city').text(json.name)
 			$('#weather_image').attr('src', getWeatherIcon(json));
 			$('#weather_description').html(formatWeatherDescription(json));
+		}
+	});
+
+	// TODO add stocks, add arrows or green/red indicator
+	$.ajax('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=ETH,BTC,XRP,BCH,USD,LTC', {
+		success: function(json) {
+			const values = convertCrypto(json);
+			
+			$('#stock').text("ETH: $" + values.eth + ", BTC: $" + values.btc + ", BCH: $" + values.bch + ", LTC: $" + values.ltc);
 		}
 	});
 
