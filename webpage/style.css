@@ -1,0 +1,89 @@
+@font-face {
+	font-family: 'font'; /*a name to be used later*/
+	src: url('font.otf'); /*URL to font*/
+}
+
+body {
+	color:#F0F0F0;
+	/* font-family: 'font'; */
+	font-family: 'Roboto', sans-serif;
+	font-weight: Thin;
+	background-color: #000;
+	/* text-shadow: #fff 1px 1px 20px; */
+	-webkit-font-smoothing: antialiased;
+	padding: 0px;
+	margin: 0px;
+}
+
+#centercontainer {
+	position: absolute;
+	left:50%;
+	transform: translate(-50%, 0%);
+	display: flex;
+	flex-direction: column;
+	padding: 50px;
+	height: 80%;
+	width: 80%;
+}
+
+#salutation {
+	font-size: 20pt;
+	text-align: center;
+	padding-bottom: 50px;
+	font-style: italic;
+}
+
+#time {
+	font-size: 50pt;
+	text-align: center;
+}
+
+#date {
+	font-size: 20pt;
+	text-align: center;
+	padding-bottom: 50px;
+}
+
+#spacer {
+	flex-grow: 1;
+}
+
+#quote_container {
+	align-self: flex-end;
+}
+
+#quote {
+	font-size: 15px;
+	text-align: right;
+	font-style: italic;
+}
+
+#author {
+	font-size: 15px;
+	margin-top: 5px;
+	text-align: right;
+	font-style: italic;
+}
+
+#weather {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding-top: 60px;
+}
+
+#weather_image {
+	height: 100px;
+	padding-bottom: 10px;
+}
+
+#weather_description {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
