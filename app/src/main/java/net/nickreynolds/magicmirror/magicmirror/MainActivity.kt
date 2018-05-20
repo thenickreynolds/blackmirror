@@ -15,6 +15,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
         }
 
+        webView.webViewClient = WebViewClient()
         webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
 
         @Suppress("UsePropertyAccessSyntax")
@@ -59,13 +61,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeBitmapAndAdjustBrightness(bitmap: Bitmap) {
-        val photoBrightness = calculateBrightnessEstimate(bitmap)
+        val brightness_low = 0f;
+        val brightness_high = 0.7f;
+        val threshhold = 50;
 
-        Log.d("BRIGHTNESS", "Adjusting to $photoBrightness")
-//        Toast.makeText(this, "Adjusting to $photoBrightness", Toast.LENGTH_LONG).show()
+        val photoBrightness = calculateBrightnessEstimate(bitmap)
+        val brightness = if (photoBrightness > threshhold) brightness_high else brightness_low
+
+        Log.d("BRIGHTNESS", "Adjusting to $brightness because of photo being $photoBrightness")
+//        Toast.makeText(this, "Adjusting to $brightness because of photo being $photoBrightness", Toast.LENGTH_LONG).show()
 
         val layoutParams = window.attributes
-        layoutParams.screenBrightness = photoBrightness / 255.toFloat()
+        layoutParams.screenBrightness = brightness
         window.attributes = layoutParams
     }
 
