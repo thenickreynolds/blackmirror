@@ -1,17 +1,22 @@
 package net.nickreynolds.magicmirror.magicmirror
 
 import android.Manifest
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_main.*
-import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.webkit.WebView
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +44,24 @@ class MainActivity : AppCompatActivity() {
         webView.settings.setJavaScriptEnabled(true)
 
         WebView.setWebContentsDebuggingEnabled(true)
+
+        tick()
+    }
+
+    private fun tick() {
+        Handler(Looper.getMainLooper()).postDelayed({ tick() }, 10000)
+        camera.captureImage({ runOnUiThread({ analyzeBitmapAndAdjustBrightness(it.bitmap) }) })
+    }
+
+    private fun analyzeBitmapAndAdjustBrightness(bitmap: Bitmap) {
+        val photoBrightness = calculateBrightnessEstimate(bitmap)
+
+        Log.d("BRIGHTNESS", "Adjusting to $photoBrightness")
+        Toast.makeText(this, "Adjusting to $photoBrightness", Toast.LENGTH_SHORT).show()
+
+        val layoutParams = window.attributes
+        layoutParams.screenBrightness = photoBrightness / 255.toFloat()
+        window.attributes = layoutParams
     }
 
     override fun onResume() {
