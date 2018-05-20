@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.webkit.WebView
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,7 +33,12 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
         }
 
-        webView.loadUrl("http://thenickreynolds.github.io/gameoflife/")
+        webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
+
+        @Suppress("UsePropertyAccessSyntax")
+        webView.settings.setJavaScriptEnabled(true)
+
+        WebView.setWebContentsDebuggingEnabled(true)
     }
 
     override fun onResume() {
