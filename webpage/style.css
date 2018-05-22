@@ -79,12 +79,12 @@ body {
 }
 
 .positive {
-	color: 	#e1f7d5;
+	color: 	#e1f7d5; /* #A4FF73 */
 	font-weight: bold;
 }
 
 .negative {
-	color: #ffbdbd;
+	color: #ffbdbd; /* #FD5858 */
 	font-weight: bold;
 }
 
