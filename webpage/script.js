@@ -162,24 +162,6 @@ function getWeatherIcon(weather) {
 	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
 }
 
-function convertCrypto(json) {
-	const btc_raw = json.USD;
-
-	const btc = Math.round(json.USD);
-	const bch = Math.round(btc_raw / json.BCH);
-	const eth = Math.round(btc_raw / json.ETH);
-	const xrp = Math.round(btc_raw / json.XRP);
-	const ltc = Math.round(btc_raw / json.LTC);
-	
-	return {
-		btc: btc,
-		bch: bch,
-		eth: eth,
-		xrp: xrp,
-		ltc: ltc,
-	}
-}
-
 function loadQuote() {
 	$.getJSON("https://www.reddit.com/r/showerthoughts/top.json?sort=top&t=month&limit=20",function(json) {
 		var rand=Math.floor(Math.random() * 20);
@@ -244,20 +226,37 @@ function loadWeather() {
 	});
 }
 
-function createCrypto(value, symbol) {
-	return '<i class="cc ' + symbol + '"></i> $' + value;
+function createCryptoText(json, symbol) {
+	const quote = json['RAW'][symbol]['USD'];
+
+	const price = quote['PRICE'];
+	const change = quote['CHANGEPCT24HOUR'];
+
+	return '<i class="cc ' + symbol + '"></i> $' + price + ', ' + '<span class="' + (change >= 0 ? 'positive' : 'negative') + '">' + Number(change).toFixed(1) + '%</span>';
+}
+
+function createStockText(stocks, symbol) {
+	const quote = stocks[symbol].quote;
+	const precentage = Number(quote.changePercent * 100).toFixed(1);
+	return symbol + ': $' + quote.latestPrice + ", " + '<span class="' + (quote.changePercent >= 0 ? 'positive' : 'negative') + '">' + precentage + "%</span>";
 }
 
 function loadCrypto() {
-	// TODO add stocks, add arrows or green/red indicator
-	$.ajax('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=ETH,BTC,XRP,BCH,USD,LTC', {
+	const coins = [ 'ETH', 'BTC', 'BCH', 'LTC' ];
+	$.ajax('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=' + coins.join(',') + '&tsyms=USD', {
 		success: function(json) {
-			const values = convertCrypto(json);
-			$('#stock').html(createCrypto(values.eth, 'ETH') + ' | ' + createCrypto(values.btc, 'BTC') + ' | ' + createCrypto(values.bch, 'BCH') + ' | ' + createCrypto(values.ltc, 'LTC'));
+			const container = $('#crypto');
+			container.html($.map(coins, coin => createCryptoText(json, coin)).join(' | '));
 		}
 	});
 
-	// https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,chart&range=1m&last=5
+	const stocks = [ 'TSLA', 'FB', 'TWTR', 'ZNGA' ];
+	$.ajax('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + stocks.join(',') + '&types=quote,chart&range=1m&last=5', {
+		success: function(json) {
+			const container = $('#stocks');
+			container.html($.map(stocks, stock => createStockText(json, stock)).join(' | '));
+		}
+	});
 }
 
 function loadFromNetwork() {

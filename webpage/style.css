@@ -71,11 +71,20 @@ body {
 	padding-top: 60px;
 }
 
-
-#stock {
+.stock {
 	text-align: center;
-	padding-top: 120px;
 	font-size: 15pt;
+	padding-bottom: 10px;
+}
+
+.positive {
+	color: 	#e1f7d5;
+	font-weight: bold;
+}
+
+.negative {
+	color: #ffbdbd;
+	font-weight: bold;
 }
 
 #weather_image {
@@ -91,10 +100,10 @@ body {
 #weather_forecast {
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
 	width: 100%;
 	padding-top: 30px;
-	height: 400px;
-	justify-content: center;
+	padding-bottom: 200px;
 }
 
 .weather_forecast_cell {
@@ -105,7 +114,7 @@ body {
 	text-align: center;
 	font-size: 10pt;
 	font-weight: bold;
-	padding-top: 50px;
+	padding-top: 55px;
 }
 
 #weather_chart {
