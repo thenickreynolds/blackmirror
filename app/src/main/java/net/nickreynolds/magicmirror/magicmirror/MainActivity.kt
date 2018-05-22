@@ -66,9 +66,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeBitmapAndAdjustBrightness(bitmap: Bitmap) {
-        val brightness_low = 0f;
-        val brightness_high = 0.7f;
-        val threshhold = 50;
+        val brightness_low = 0f
+        val brightness_high = 0.7f
+        val threshhold = 50
 
         val photoBrightness = calculateBrightnessEstimate(bitmap)
         val brightness = if (photoBrightness > threshhold) brightness_high else brightness_low
