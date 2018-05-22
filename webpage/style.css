@@ -47,11 +47,12 @@ body {
 }
 
 #quote_container {
+	padding-top: 100px;
 	align-self: flex-end;
 }
 
 #quote {
-	font-size: 15px;
+	font-size: 18px;
 	text-align: right;
 	font-style: italic;
 }
@@ -74,6 +75,7 @@ body {
 .stock {
 	text-align: center;
 	padding-bottom: 10px;
+	font-size: 18px;
 }
 
 .positive {
