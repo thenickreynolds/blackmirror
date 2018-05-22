@@ -1,14 +1,19 @@
+const second_ms = 1000;
+const minute_ms = 60 * second_ms;
+const hour_ms = 60 * minute_ms;
 
 $('document').ready(function(){
     $('#loading').show();
 	$('.content').hide();
+	
+	const saluation_tick = hour_ms;
+	const time_tick = 10 * second_ms;
+	const reload_tick = hour_ms;
 
-	const clock_tick = 10 * 1000;
-	const reload_tick = 60 * 60 * 1000;
-
+	updateSaluation();
+	setInterval(updateSaluation, saluation_tick);
 	updateTime();
-
-	setInterval(function() { updateTime(); }, clock_tick);
+	setInterval(updateTime, time_tick);
 
 	setInterval(function() { location.reload(); }, reload_tick);
 
@@ -125,12 +130,14 @@ function getSalutation(time) {
 	return prefix + adjective + " " + noun + "!";
 }
 
+function updateSaluation() {
+	$('#salutation').text(getSalutation(moment()));
+}
+
 function updateTime() {
 	const time = moment();
 
-	$('#salutation').text(getSalutation(time));
-
-	$('#date').text(time.format("ddd - Do MMM").toUpperCase());
+	$('#date').text(time.format("ddd Do MMM"));
 	$('#time').text(time.format("h:mm"));
 };
 
@@ -150,8 +157,8 @@ function formatWeatherDescription(json) {
 	return temp.celsius + "&deg;C (" + temp.fahrenheit + "&deg;F) " + weather.main;
 }
 
-function getWeatherIcon(json) {
-	const icon_key = json.weather[0].icon;
+function getWeatherIcon(weather) {
+	const icon_key = weather.icon;
 	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
 }
 
@@ -173,7 +180,7 @@ function convertCrypto(json) {
 	}
 }
 
-function loadFromNetwork() {
+function loadQuote() {
 	$.getJSON("https://www.reddit.com/r/showerthoughts/top.json?sort=top&t=month&limit=20",function(json) {
 		var rand=Math.floor(Math.random() * 20);
 		var post=json.data.children[rand].data;
@@ -184,27 +191,81 @@ function loadFromNetwork() {
 		$('#quote').html("\""+quote+"\"");
 		$('#author').html(" - <a href='"+quoteUrl+"' target='_blank'>u/"+author+"</a>");
 	});
+}
 
-	//http://api.openweathermap.org/data/2.5/weather?zip=94040,us&appid=21911463fcda2cf5698e65f90ed064f2
-	//http://api.openweathermap.org/data/2.5/forecast?zip=94040,us&appid=21911463fcda2cf5698e65f90ed064f2
-	$.ajax('http://api.openweathermap.org/data/2.5/weather?zip=94040,us&appid=21911463fcda2cf5698e65f90ed064f2', {
+function loadWeather() {
+	$.ajax('http://api.openweathermap.org/data/2.5/weather?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
 		dataType: 'jsonp',
 		success: function(json) {
 			$('#weather_city').text(json.name)
-			$('#weather_image').attr('src', getWeatherIcon(json));
+
+			$('#weather_image').attr('src', getWeatherIcon(json.weather[0]));
 			$('#weather_description').html(formatWeatherDescription(json));
 		}
 	});
 
+	$.ajax('http://api.openweathermap.org/data/2.5/forecast?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
+		dataType: 'jsonp',
+		success: function(json) {
+			var tempDataset = [];
+			var tempNameDataset = [];
+			var now = moment();
+
+			const container = $('#weather_forecast');
+			container.empty();
+
+			for (var i = 0; i < json.list.length; i++) {
+				const elem = json.list[i];
+				const time = moment(elem.dt_txt);
+
+				if (time.hour() == 12) {
+					var cell = $('<div class="weather_forecast_cell"></div>')
+					cell.css('background-image', 'url(' + getWeatherIcon(elem.weather[0]) + ')');
+					cell.text(time.format('ddd'));
+					container.append(cell);
+				}
+
+				if (time.diff(now) < 24 * hour_ms) {
+					const temp = calculateTemp(elem.main.temp);
+					tempDataset.push(temp.celsius);
+					tempNameDataset.push(time.format('ha'));
+				}
+			}
+
+			new Chartist.Line('#weather_chart',
+				{ labels: tempNameDataset, series: [ tempDataset ] },
+				{
+					width: 800,
+					height: 150,
+					showArea: true,
+					lineSmooth: true,
+				});
+		}
+	});
+}
+
+function createCrypto(value, symbol) {
+	return '<i class="cc ' + symbol + '"></i> $' + value;
+}
+
+function loadCrypto() {
 	// TODO add stocks, add arrows or green/red indicator
 	$.ajax('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=ETH,BTC,XRP,BCH,USD,LTC', {
 		success: function(json) {
 			const values = convertCrypto(json);
-			
-			$('#stock').text("ETH: $" + values.eth + ", BTC: $" + values.btc + ", BCH: $" + values.bch + ", LTC: $" + values.ltc);
+			$('#stock').html(createCrypto(values.eth, 'ETH') + ' | ' + createCrypto(values.btc, 'BTC') + ' | ' + createCrypto(values.bch, 'BCH') + ' | ' + createCrypto(values.ltc, 'LTC'));
 		}
 	});
 
+	// https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,chart&range=1m&last=5
+}
+
+function loadFromNetwork() {
+	loadQuote();
+	loadWeather();
+	loadCrypto();
+
+	// TODO remove or actually fix loading
 	$('#loading').fadeOut("fast");
 	$('.content').fadeIn("slow");
 };
