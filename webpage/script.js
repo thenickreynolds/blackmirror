@@ -197,8 +197,8 @@ function loadWeather() {
 			container.empty();
 
 			for (var i = 0; i < json.list.length; i++) {
-				const forecast = json.list[i];
-				const time = moment(forecast.dt_txt);
+				var forecast = json.list[i];
+				var time = moment(forecast.dt_txt);
 
 				if (time.hour() == 12) {
 					var cell = $('<div class="weather_forecast_cell"></div>')
@@ -208,7 +208,7 @@ function loadWeather() {
 				}
 
 				if (time.diff(now) < 24 * hour_ms) {
-					const temp = calculateTemp(forecast.main.temp);
+					var temp = calculateTemp(forecast.main.temp);
 					tempDataset.push(temp.celsius);
 					tempNameDataset.push(time.format('ha'));
 				}
