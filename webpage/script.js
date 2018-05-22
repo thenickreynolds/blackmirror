@@ -214,14 +214,14 @@ function loadWeather() {
 				}
 			}
 
-			new Chartist.Line('#weather_chart',
-				{ labels: tempNameDataset, series: [ tempDataset ] },
-				{
-					width: 800,
-					height: 150,
-					showArea: true,
-					lineSmooth: true,
-				});
+			// new Chartist.Line('#weather_chart',
+			// 	{ labels: tempNameDataset, series: [ tempDataset ] },
+			// 	{
+			// 		width: 800,
+			// 		height: 150,
+			// 		showArea: true,
+			// 		lineSmooth: true,
+			// 	});
 		}
 	});
 }
@@ -246,15 +246,15 @@ function loadCrypto() {
 	$.ajax('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=' + coins.join(',') + '&tsyms=USD', {
 		success: function(json) {
 			const container = $('#crypto');
-			container.html($.map(coins, coin => createCryptoText(json, coin)).join(' | '));
+			container.html($.map(coins, function(coin) { return createCryptoText(json, coin); }).join(' | '));
 		}
 	});
-
+	
 	const stocks = [ 'TSLA', 'FB', 'TWTR', 'ZNGA' ];
 	$.ajax('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + stocks.join(',') + '&types=quote,chart&range=1m&last=5', {
 		success: function(json) {
 			const container = $('#stocks');
-			container.html($.map(stocks, stock => createStockText(json, stock)).join(' | '));
+			container.html($.map(stocks, function(stock) { return createStockText(json, stock); }).join(' | '));
 		}
 	});
 }
