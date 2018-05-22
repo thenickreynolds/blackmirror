@@ -18,6 +18,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import com.wonderkiln.camerakit.CameraKit
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setImmersive()
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContentView(R.layout.activity_main)
 
@@ -53,16 +54,27 @@ class MainActivity : AppCompatActivity() {
 
         webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
 
-        camera.facing = 1
+        camera.facing = CameraKit.Constants.FACING_FRONT
 
         tick()
     }
 
     private fun tick() {
+        if (isDestroyed) {
+            return
+        }
+
         val interval = 30 * 1000L
 //        val interval = 5 * 1000L
         Handler(Looper.getMainLooper()).postDelayed({ tick() }, interval)
-        camera.captureImage({ runOnUiThread({ analyzeBitmapAndAdjustBrightness(it.bitmap) }) })
+
+        camera.start()
+        camera.captureImage({
+            runOnUiThread({
+                analyzeBitmapAndAdjustBrightness(it.bitmap)
+                camera.stop()
+            })
+        })
     }
 
     private fun analyzeBitmapAndAdjustBrightness(bitmap: Bitmap) {
