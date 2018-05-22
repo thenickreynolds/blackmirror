@@ -197,18 +197,18 @@ function loadWeather() {
 			container.empty();
 
 			for (var i = 0; i < json.list.length; i++) {
-				const elem = json.list[i];
-				const time = moment(elem.dt_txt);
+				const forecast = json.list[i];
+				const time = moment(forecast.dt_txt);
 
 				if (time.hour() == 12) {
 					var cell = $('<div class="weather_forecast_cell"></div>')
-					cell.css('background-image', 'url(' + getWeatherIcon(elem.weather[0]) + ')');
+					cell.css('background-image', 'url(' + getWeatherIcon(forecast.weather[0]) + ')');
 					cell.text(time.format('ddd'));
 					container.append(cell);
 				}
 
 				if (time.diff(now) < 24 * hour_ms) {
-					const temp = calculateTemp(elem.main.temp);
+					const temp = calculateTemp(forecast.main.temp);
 					tempDataset.push(temp.celsius);
 					tempNameDataset.push(time.format('ha'));
 				}
