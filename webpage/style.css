@@ -78,13 +78,17 @@ body {
 	font-size: 18px;
 }
 
+.stock_divider {
+	color: #999;
+}
+
 .positive {
-	color: 	#e1f7d5; /* #A4FF73 */
+	color: #A4FF73;
 	font-weight: bold;
 }
 
 .negative {
-	color: #ffbdbd; /* #FD5858 */
+	color: #FD5858;
 	font-weight: bold;
 }
 

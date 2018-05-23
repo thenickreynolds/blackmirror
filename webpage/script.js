@@ -2,66 +2,7 @@ const second_ms = 1000;
 const minute_ms = 60 * second_ms;
 const hour_ms = 60 * minute_ms;
 
-$('document').ready(function(){
-    $('#loading').show();
-	$('.content').hide();
-	
-	const saluation_tick = hour_ms;
-	const time_tick = 10 * second_ms;
-	const reload_tick = hour_ms;
-
-	updateSaluation();
-	setInterval(updateSaluation, saluation_tick);
-	updateTime();
-	setInterval(updateTime, time_tick);
-
-	setInterval(function() { location.reload(); }, reload_tick);
-
-	loadFromNetwork();
-});
-
-// const icons = {
-// 	key: chanceflurries.png,
-// 	key: chancerain.png,
-// 	key: chancesleet.png,
-// 	key: chancesnow.png,
-// 	key: chancetstorms.png,
-// 	key: clear.png,
-// 	key: cloudy.png,
-// 	key: flurries.png,
-// 	key: fog.png,
-// 	key: hazy.png,
-// 	key: mostlycloudy.png,
-// 	key: mostlysunny.png,
-// 	key: nt_chanceflurries.png,
-// 	key: nt_chancerain.png,
-// 	key: nt_chancesleet.png,
-// 	key: nt_chancesnow.png,
-// 	key: nt_chancetstorms.png,
-// 	key: nt_clear.png,
-// 	key: nt_cloudy.png,
-// 	key: nt_flurries.png,
-// 	key: nt_fog.png,
-// 	key: nt_hazy.png,
-// 	key: nt_mostlycloudy.png,
-// 	key: nt_mostlysunny.png,
-// 	key: nt_partlycloudy.png,
-// 	key: nt_partlysunny.png,
-// 	key: nt_rain.png,
-// 	key: nt_sleet.png,
-// 	key: nt_snow.png,
-// 	key: nt_sunny.png,
-// 	key: nt_tstorms.png,
-// 	key: nt_unknown.png,
-// 	key: partlycloudy.png,
-// 	key: partlysunny.png,
-// 	key: rain.png,
-// 	key: sleet.png,
-// 	key: snow.png,
-// 	key: sunny.png,
-// 	key: tstorms.png,
-// 	key: unknown.png,
-// }
+const stock_divider = '<span class="stock_divider"> | </span>';
 
 const weather_icons = {
 	'00d': 'unknown.png',
@@ -88,6 +29,24 @@ const weather_icons = {
 
 const saluation_nouns = [ "person", "angel", "fox", "brute" ];
 const saluation_adjectives = [ "sexy", "beautiful", "handsome", "amazing", "glorious", "picturesque", "admirable" ];
+
+$('document').ready(function(){
+    $('#loading').show();
+	$('.content').hide();
+	
+	const saluation_tick = hour_ms;
+	const time_tick = 10 * second_ms;
+	const reload_tick = hour_ms;
+
+	updateSaluation();
+	setInterval(updateSaluation, saluation_tick);
+	updateTime();
+	setInterval(updateTime, time_tick);
+
+	setInterval(function() { location.reload(); }, reload_tick);
+
+	loadFromNetwork();
+});
 
 function random_between(low, high) {
 	const range = high - low + 1;
@@ -192,10 +151,6 @@ function loadWeather() {
 	$.ajax('http://api.openweathermap.org/data/2.5/forecast?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
 		dataType: 'jsonp',
 		success: function(json) {
-			var tempDataset = [];
-			var tempNameDataset = [];
-			var now = moment();
-
 			const container = $('#weather_forecast');
 			container.empty();
 
@@ -209,39 +164,27 @@ function loadWeather() {
 					cell.text(time.format('ddd'));
 					container.append(cell);
 				}
-
-				if (time.diff(now) < 24 * hour_ms) {
-					var temp = calculateTemp(forecast.main.temp);
-					tempDataset.push(temp.celsius);
-					tempNameDataset.push(time.format('ha'));
-				}
 			}
-
-			// new Chartist.Line('#weather_chart',
-			// 	{ labels: tempNameDataset, series: [ tempDataset ] },
-			// 	{
-			// 		width: 800,
-			// 		height: 150,
-			// 		showArea: true,
-			// 		lineSmooth: true,
-			// 	});
 		}
 	});
 }
 
+function createAmountHtml(symbolHtml, amount, percentChange) {
+	const className = percentChange >= 0 ? 'positive' : 'negative';
+	const colorOpen = '<span class="' + className + '">';
+	const colorClose = '</span>';
+	const changeHtml = Number(percentChange).toFixed(1) + '%';
+	return symbolHtml + ' ' + colorOpen + changeHtml + colorClose + ' $' + amount;
+}
+
 function createCryptoText(json, symbol) {
 	const quote = json['RAW'][symbol]['USD'];
-
-	const price = quote['PRICE'];
-	const change = quote['CHANGEPCT24HOUR'];
-
-	return '<i class="cc ' + symbol + '"></i> $' + price + ', ' + '<span class="' + (change >= 0 ? 'positive' : 'negative') + '">' + Number(change).toFixed(1) + '%</span>';
+	return createAmountHtml('<i class="cc ' + symbol + '"></i>&nbsp;', quote['PRICE'], quote['CHANGEPCT24HOUR']);
 }
 
 function createStockText(stocks, symbol) {
 	const quote = stocks[symbol].quote;
-	const precentage = Number(quote.changePercent * 100).toFixed(1);
-	return symbol + ': $' + quote.latestPrice + ", " + '<span class="' + (quote.changePercent >= 0 ? 'positive' : 'negative') + '">' + precentage + "%</span>";
+	return createAmountHtml(symbol, quote.latestPrice, quote.changePercent * 100);
 }
 
 function loadCrypto() {
@@ -249,7 +192,7 @@ function loadCrypto() {
 	$.ajax('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=' + coins.join(',') + '&tsyms=USD', {
 		success: function(json) {
 			const container = $('#crypto');
-			container.html($.map(coins, function(coin) { return createCryptoText(json, coin); }).join(' | '));
+			container.html($.map(coins, function(coin) { return createCryptoText(json, coin); }).join(stock_divider));
 		}
 	});
 	
@@ -257,7 +200,7 @@ function loadCrypto() {
 	$.ajax('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + stocks.join(',') + '&types=quote,chart&range=1m&last=5', {
 		success: function(json) {
 			const container = $('#stocks');
-			container.html($.map(stocks, function(stock) { return createStockText(json, stock); }).join(' | '));
+			container.html($.map(stocks, function(stock) { return createStockText(json, stock); }).join(stock_divider));
 		}
 	});
 }
