@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "babel src/script.js > ./script.js"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "devDependencies": {
+    "babel": "^6.23.0"
+  }
+}

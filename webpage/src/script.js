@@ -184,7 +184,7 @@ function createCryptoText(json, symbol) {
 
 function createStockText(stocks, symbol) {
 	const quote = stocks[symbol].quote;
-	return createAmountHtml(symbol, quote.latestPrice, quote.changePercent * 100);
+	return createAmountHtml('<b>' + symbol + '</b>', quote.latestPrice, quote.changePercent * 100);
 }
 
 function loadCrypto() {
