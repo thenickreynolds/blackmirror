@@ -46,7 +46,7 @@ $('document').ready(function () {
 	setInterval(updateTime, time_tick);
 
 	setInterval(function () {
-		location.reload();
+		return location.reload();
 	}, reload_tick);
 
 	loadFromNetwork();
