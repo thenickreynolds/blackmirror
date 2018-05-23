@@ -30,7 +30,7 @@ const weather_icons = {
 const saluation_nouns = [ "person", "angel", "fox", "brute" ];
 const saluation_adjectives = [ "sexy", "beautiful", "handsome", "amazing", "glorious", "picturesque", "admirable" ];
 
-$('document').ready(function(){
+$('document').ready(() => {
     $('#loading').show();
 	$('.content').hide();
 	
@@ -59,10 +59,10 @@ function random_element(arr) {
 }
 
 function getSalutationPrefix(time) {
-	const morningSalutation = "Good morning you ";
-	const daySalutation = "Good day you ";
-	const eveningSalutation = "Good afternoon you ";
-	const nightSalutation = "Good night you ";
+	const morningSalutation = "Good morning you";
+	const daySalutation = "Good day you";
+	const eveningSalutation = "Good afternoon you";
+	const nightSalutation = "Good night you";
 
 	const hour = time.hour() + 1;
 
@@ -86,7 +86,7 @@ function getSalutation(time) {
 	const noun = random_element(saluation_nouns);
 	const adjective = random_element(saluation_adjectives);
 
-	return prefix + adjective + " " + noun + "!";
+	return `${prefix} ${adjective} ${noun}!`;
 }
 
 function updateSaluation() {
@@ -113,34 +113,32 @@ function calculateTemp(kelvin) {
 function formatWeatherDescription(json) {
 	const temp = calculateTemp(json.main.temp);
 	const weather = json.weather[0];
-	return temp.celsius + "&deg;C (" + temp.fahrenheit + "&deg;F) " + weather.main;
+	return `${temp.celsius}&deg;C (${temp.fahrenheit}&deg;F) ${weather.main}`;
 }
 
 function getWeatherIcon(weather, force_day = false) {
-	var icon_key = weather.icon;
-	if (force_day) {
-		icon_key = icon_key.replace("n", "d");
-	}
-	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
+	const icon_key = force_day ? weather.icon : weather.icon.replace("n", "d");
+	const icon_file = weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d'];
+	return `weather_icons/${icon_file}`;
 }
 
 function loadQuote() {
-	$.getJSON("https://www.reddit.com/r/showerthoughts/top.json?sort=top&t=month&limit=20",function(json) {
-		var rand=Math.floor(Math.random() * 20);
-		var post=json.data.children[rand].data;
-		var quote=post.title;
-		var author=post.author;
-		var quoteUrl="http://www.reddit.com"+post.permalink;
+	$.getJSON("https://www.reddit.com/r/showerthoughts/top.json?sort=top&t=month&limit=20", json => {
+		const rand = Math.floor(Math.random() * 20);
+		const post = json.data.children[rand].data;
+		const quote = post.title;
+		const author = post.author;
+		const quoteUrl = "http://www.reddit.com"+post.permalink;
 
-		$('#quote').html("\""+quote+"\"");
-		$('#author').html(" - <a href='"+quoteUrl+"' target='_blank'>u/"+author+"</a>");
+		$('#quote').html(`&quot;${quote}&quot;`);
+		$('#author').html(` - <a href="${quoteUrl}" target="_blank">u/${author}</a>`);
 	});
 }
 
 function loadWeather() {
 	$.ajax('http://api.openweathermap.org/data/2.5/weather?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
 		dataType: 'jsonp',
-		success: function(json) {
+		success: json => {
 			$('#weather_city').text(json.name)
 
 			$('#weather_image').attr('src', getWeatherIcon(json.weather[0]));
@@ -150,57 +148,51 @@ function loadWeather() {
 
 	$.ajax('http://api.openweathermap.org/data/2.5/forecast?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
 		dataType: 'jsonp',
-		success: function(json) {
-			const container = $('#weather_forecast');
-			container.empty();
-
-			for (var i = 0; i < json.list.length; i++) {
-				var forecast = json.list[i];
-				var time = moment(forecast.dt_txt);
-
-				if (time.hour() == 12) {
-					var cell = $('<div class="weather_forecast_cell"></div>')
-					cell.css('background-image', 'url(' + getWeatherIcon(forecast.weather[0], true) + ')');
-					cell.text(time.format('ddd'));
-					container.append(cell);
-				}
-			}
+		success: json => {
+			json.list.forEach(forecast => forecast.moment = moment(forecast.dt_txt));
+			const elements = json.list
+				.filter(forecast => forecast.moment.hour() == 12)
+				.map(forecast => {
+					const icon = getWeatherIcon(forecast.weather[0], true);
+					return $('<div class="weather_forecast_cell"></div>')
+						.css('background-image', `url(${icon})`)
+						.text(forecast.moment.format('ddd'));
+				});
+			$('#weather_forecast').empty().append(elements);
 		}
 	});
 }
 
 function createAmountHtml(symbolHtml, amount, percentChange) {
 	const className = percentChange >= 0 ? 'positive' : 'negative';
-	const colorOpen = '<span class="' + className + '">';
-	const colorClose = '</span>';
-	const changeHtml = Number(percentChange).toFixed(1) + '%';
-	return symbolHtml + ' ' + colorOpen + changeHtml + colorClose + ' $' + amount;
+	const formattedNumber = Number(percentChange).toFixed(1);
+	return `${symbolHtml} <span class="${className}">${formattedNumber}%</span>`;
 }
 
-function createCryptoText(json, symbol) {
+function createCryptoHtml(json, symbol) {
 	const quote = json['RAW'][symbol]['USD'];
-	return createAmountHtml('<i class="cc ' + symbol + '"></i>&nbsp;', quote['PRICE'], quote['CHANGEPCT24HOUR']);
+	return createAmountHtml(`<i class="cc ${symbol}"></i>&nbsp;`, quote['PRICE'], quote['CHANGEPCT24HOUR']);
 }
 
-function createStockText(stocks, symbol) {
+function createStockHtml(stocks, symbol) {
 	const quote = stocks[symbol].quote;
-	return createAmountHtml('<b>' + symbol + '</b>', quote.latestPrice, quote.changePercent * 100);
+	return createAmountHtml(`<b>${symbol}</b>`, quote.latestPrice, quote.changePercent * 100);
 }
 
 function loadCrypto() {
 	const coins = [ 'ETH', 'BTC', 'BCH', 'LTC' ];
-	$.ajax('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=' + coins.join(',') + '&tsyms=USD', {
-		success: function(json) {
+	$.ajax(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${coins.join(',')}&tsyms=USD`, {
+		success: json => {
 			const container = $('#crypto');
-			container.html($.map(coins, function(coin) { return createCryptoText(json, coin); }).join(stock_divider));
+			container.html($.map(coins, coin => createCryptoHtml(json, coin)).join(stock_divider));
 		}
 	});
 	
 	const stocks = [ 'TSLA', 'FB', 'TWTR', 'ZNGA' ];
-	$.ajax('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + stocks.join(',') + '&types=quote,chart&range=1m&last=5', {
-		success: function(json) {
+	$.ajax(`https://api.iextrading.com/1.0/stock/market/batch?symbols=${stocks.join(',')}&types=quote,chart&range=1m&last=5`, {
+		success: json => {
 			const container = $('#stocks');
-			container.html($.map(stocks, function(stock) { return createStockText(json, stock); }).join(stock_divider));
+			container.html($.map(stocks, stock => createStockHtml(json, stock)).join(stock_divider));
 		}
 	});
 }

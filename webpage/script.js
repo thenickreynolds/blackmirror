@@ -63,10 +63,10 @@ function random_element(arr) {
 }
 
 function getSalutationPrefix(time) {
-	var morningSalutation = "Good morning you ";
-	var daySalutation = "Good day you ";
-	var eveningSalutation = "Good afternoon you ";
-	var nightSalutation = "Good night you ";
+	var morningSalutation = "Good morning you";
+	var daySalutation = "Good day you";
+	var eveningSalutation = "Good afternoon you";
+	var nightSalutation = "Good night you";
 
 	var hour = time.hour() + 1;
 
@@ -90,7 +90,7 @@ function getSalutation(time) {
 	var noun = random_element(saluation_nouns);
 	var adjective = random_element(saluation_adjectives);
 
-	return prefix + adjective + " " + noun + "!";
+	return prefix + ' ' + adjective + ' ' + noun + '!';
 }
 
 function updateSaluation() {
@@ -117,17 +117,15 @@ function calculateTemp(kelvin) {
 function formatWeatherDescription(json) {
 	var temp = calculateTemp(json.main.temp);
 	var weather = json.weather[0];
-	return temp.celsius + "&deg;C (" + temp.fahrenheit + "&deg;F) " + weather.main;
+	return temp.celsius + '&deg;C (' + temp.fahrenheit + '&deg;F) ' + weather.main;
 }
 
 function getWeatherIcon(weather) {
 	var force_day = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-	var icon_key = weather.icon;
-	if (force_day) {
-		icon_key = icon_key.replace("n", "d");
-	}
-	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
+	var icon_key = force_day ? weather.icon : weather.icon.replace("n", "d");
+	var icon_file = weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d'];
+	return 'weather_icons/' + icon_file;
 }
 
 function loadQuote() {
@@ -138,8 +136,8 @@ function loadQuote() {
 		var author = post.author;
 		var quoteUrl = "http://www.reddit.com" + post.permalink;
 
-		$('#quote').html("\"" + quote + "\"");
-		$('#author').html(" - <a href='" + quoteUrl + "' target='_blank'>u/" + author + "</a>");
+		$('#quote').html('&quot;' + quote + '&quot;');
+		$('#author').html(' - <a href="' + quoteUrl + '" target="_blank">u/' + author + '</a>');
 	});
 }
 
@@ -157,38 +155,32 @@ function loadWeather() {
 	$.ajax('http://api.openweathermap.org/data/2.5/forecast?zip=94110,us&appid=21911463fcda2cf5698e65f90ed064f2', {
 		dataType: 'jsonp',
 		success: function success(json) {
-			var container = $('#weather_forecast');
-			container.empty();
-
-			for (var i = 0; i < json.list.length; i++) {
-				var forecast = json.list[i];
-				var time = moment(forecast.dt_txt);
-
-				if (time.hour() == 12) {
-					var cell = $('<div class="weather_forecast_cell"></div>');
-					cell.css('background-image', 'url(' + getWeatherIcon(forecast.weather[0], true) + ')');
-					cell.text(time.format('ddd'));
-					container.append(cell);
-				}
-			}
+			json.list.forEach(function (forecast) {
+				return forecast.moment = moment(forecast.dt_txt);
+			});
+			var elements = json.list.filter(function (forecast) {
+				return forecast.moment.hour() == 12;
+			}).map(function (forecast) {
+				var icon = getWeatherIcon(forecast.weather[0], true);
+				return $('<div class="weather_forecast_cell"></div>').css('background-image', 'url(' + icon + ')').text(forecast.moment.format('ddd'));
+			});
+			$('#weather_forecast').empty().append(elements);
 		}
 	});
 }
 
 function createAmountHtml(symbolHtml, amount, percentChange) {
 	var className = percentChange >= 0 ? 'positive' : 'negative';
-	var colorOpen = '<span class="' + className + '">';
-	var colorClose = '</span>';
-	var changeHtml = Number(percentChange).toFixed(1) + '%';
-	return symbolHtml + ' ' + colorOpen + changeHtml + colorClose + ' $' + amount;
+	var formattedNumber = Number(percentChange).toFixed(1);
+	return symbolHtml + ' <span class="' + className + '">' + formattedNumber + '%</span>';
 }
 
-function createCryptoText(json, symbol) {
+function createCryptoHtml(json, symbol) {
 	var quote = json['RAW'][symbol]['USD'];
 	return createAmountHtml('<i class="cc ' + symbol + '"></i>&nbsp;', quote['PRICE'], quote['CHANGEPCT24HOUR']);
 }
 
-function createStockText(stocks, symbol) {
+function createStockHtml(stocks, symbol) {
 	var quote = stocks[symbol].quote;
 	return createAmountHtml('<b>' + symbol + '</b>', quote.latestPrice, quote.changePercent * 100);
 }
@@ -199,7 +191,7 @@ function loadCrypto() {
 		success: function success(json) {
 			var container = $('#crypto');
 			container.html($.map(coins, function (coin) {
-				return createCryptoText(json, coin);
+				return createCryptoHtml(json, coin);
 			}).join(stock_divider));
 		}
 	});
@@ -209,7 +201,7 @@ function loadCrypto() {
 		success: function success(json) {
 			var container = $('#stocks');
 			container.html($.map(stocks, function (stock) {
-				return createStockText(json, stock);
+				return createStockHtml(json, stock);
 			}).join(stock_divider));
 		}
 	});
