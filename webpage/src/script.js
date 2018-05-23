@@ -117,7 +117,7 @@ function formatWeatherDescription(json) {
 }
 
 function getWeatherIcon(weather, force_day = false) {
-	const icon_key = force_day ? weather.icon : weather.icon.replace("n", "d");
+	const icon_key = force_day ? weather.icon.replace("n", "d") : weather.icon;
 	const icon_file = weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d'];
 	return `weather_icons/${icon_file}`;
 }

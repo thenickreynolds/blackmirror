@@ -123,7 +123,7 @@ function formatWeatherDescription(json) {
 function getWeatherIcon(weather) {
 	var force_day = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-	var icon_key = force_day ? weather.icon : weather.icon.replace("n", "d");
+	var icon_key = force_day ? weather.icon.replace("n", "d") : weather.icon;
 	var icon_file = weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d'];
 	return 'weather_icons/' + icon_file;
 }
