@@ -3,11 +3,10 @@
     "build": "babel src/script.js > ./script.js"
   },
   "babel": {
-    "presets": [
-      "env"
-    ]
+    "presets": ["env"]
   },
   "devDependencies": {
-    "babel": "^6.23.0"
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
   }
 }
