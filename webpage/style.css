@@ -47,7 +47,7 @@ body {
 }
 
 #quote_container {
-	padding-top: 100px;
+	padding-top: 50px;
 	align-self: flex-end;
 }
 
@@ -104,7 +104,6 @@ body {
 	justify-content: center;
 	width: 100%;
 	padding-top: 30px;
-	padding-bottom: 200px;
 }
 
 .weather_forecast_cell {

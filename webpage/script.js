@@ -157,8 +157,11 @@ function formatWeatherDescription(json) {
 	return temp.celsius + "&deg;C (" + temp.fahrenheit + "&deg;F) " + weather.main;
 }
 
-function getWeatherIcon(weather) {
-	const icon_key = weather.icon;
+function getWeatherIcon(weather, force_day = false) {
+	var icon_key = weather.icon;
+	if (force_day) {
+		icon_key = icon_key.replace("n", "d");
+	}
 	return "weather_icons/" + (weather_icons[icon_key] != undefined ? weather_icons[icon_key] : weather_icons['00d']);
 }
 
@@ -202,7 +205,7 @@ function loadWeather() {
 
 				if (time.hour() == 12) {
 					var cell = $('<div class="weather_forecast_cell"></div>')
-					cell.css('background-image', 'url(' + getWeatherIcon(forecast.weather[0]) + ')');
+					cell.css('background-image', 'url(' + getWeatherIcon(forecast.weather[0], true) + ')');
 					cell.text(time.format('ddd'));
 					container.append(cell);
 				}
