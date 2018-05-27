@@ -26,18 +26,18 @@ body {
 }
 
 #salutation {
-	font-size: 20pt;
+	font-size: 26pt;
 	text-align: center;
 	font-style: italic;
 }
 
 #time {
-	font-size: 50pt;
+	font-size: 80pt;
 	text-align: center;
 }
 
 #date {
-	font-size: 20pt;
+	font-size: 30pt;
 	text-align: center;
 	padding-bottom: 50px;
 }
@@ -52,13 +52,13 @@ body {
 }
 
 #quote {
-	font-size: 18px;
+	font-size: 28px;
 	text-align: right;
 	font-style: italic;
 }
 
 #author {
-	font-size: 15px;
+	font-size: 25px;
 	margin-top: 5px;
 	text-align: right;
 	font-style: italic;
@@ -75,7 +75,7 @@ body {
 .stock {
 	text-align: center;
 	padding-bottom: 10px;
-	font-size: 18px;
+	font-size: 28px;
 }
 
 .stock_divider {
@@ -98,7 +98,7 @@ body {
 }
 
 #weather_description {
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: bold;
 }
 
@@ -111,14 +111,14 @@ body {
 }
 
 .weather_forecast_cell {
-	min-width: 50px;
+	min-width: 100px;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: top;
 	text-align: center;
-	font-size: 10pt;
+	font-size: 20pt;
 	font-weight: bold;
-	padding-top: 55px;
+	padding-top: 100px;
 }
 
 #weather_chart {
