@@ -1,4 +1,4 @@
-export interface Weather {
+export interface WeatherData {
   coord: Coord;
   weather?: WeatherEntity[] | null;
   base: string;
