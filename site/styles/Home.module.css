@@ -121,3 +121,11 @@
     flex-direction: column;
   }
 }
+
+.weight_charts {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
