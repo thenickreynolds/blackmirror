@@ -1,4 +1,6 @@
+import { env } from "process";
 import { useEffect, useState } from "react";
+import Assert from "./assert";
 import { WeatherData } from "./openWeatherMapInterfaces";
 
 export enum ApiState {
@@ -14,7 +16,9 @@ export interface WeatherApiStatus {
 
 export default class Weather {
   static readonly ZIP_CODE: string = "94114";
-  static readonly API_KEY: string = "fdeb56ea588891439fd8f658fe75e6a7"; // "21911463fcda2cf5698e65f90ed064f2"; // TODO move to env variable
+  static readonly API_KEY: string = Assert.notNull(
+    process.env.OPEN_WEATHER_API_KEY
+  );
   static readonly WEATHER_ICONS: Record<string, string> = {
     "00d": "unknown.png",
     "01d": "clear.png",
@@ -55,7 +59,7 @@ export default class Weather {
 
     useEffect(() => {
       fetch(
-        `http://api.openweathermap.org/data/2.5/weather?zip=${this.ZIP_CODE},us&appid=${this.API_KEY}`
+        `https://api.openweathermap.org/data/2.5/weather?zip=${this.ZIP_CODE},us&appid=${this.API_KEY}`
       )
         .then((response) => response.json())
         .then((response) => {
