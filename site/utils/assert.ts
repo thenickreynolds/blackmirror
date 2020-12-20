@@ -12,4 +12,12 @@ export default class Assert {
 
     return field!;
   }
+
+  static notNullOrEmpty(field?: string, message?: string) {
+    if (field === null || field === undefined || field.length === 0) {
+      throw new Error(message || "Field was null or empty");
+    }
+
+    return field!;
+  }
 }
