@@ -129,3 +129,8 @@
   align-items: center;
   align-content: center;
 }
+
+.content {
+  padding-left: 100px;
+  padding-right: 100px;
+}
