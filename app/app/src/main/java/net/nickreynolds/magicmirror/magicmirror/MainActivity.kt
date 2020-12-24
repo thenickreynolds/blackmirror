@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         WebView.setWebContentsDebuggingEnabled(true)
 
-        webView.loadUrl("https://thenickreynolds.github.io/blackmirror/webpage/mirror.html")
+        webView.loadUrl("https://gday.today")
 
         camera.facing = CameraKit.Constants.FACING_FRONT
 
